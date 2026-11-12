@@ -30,6 +30,21 @@ class RegisterView(APIView):
         }, status=status.HTTP_201_CREATED)
 
 
+class AuthRootView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        return Response({
+            "message": "Biz authentication API",
+            "endpoints": {
+                "register": "/api/auth/register/",
+                "login": "/api/auth/login/",
+                "logout": "/api/auth/logout/",
+                "me": "/api/auth/me/",
+            },
+        })
+
+
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
