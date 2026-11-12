@@ -1,3 +1,4 @@
+
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import path, include
@@ -11,4 +12,5 @@ urlpatterns = [
     path("api/auth", auth_without_trailing_slash),
     path("api/auth/", include("accounts.urls")),
     path("api/businesses/", include("businesses.urls")),
+    path("api/ingestion/", include("ingestion.urls")),
 ]
