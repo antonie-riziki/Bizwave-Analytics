@@ -18,4 +18,9 @@ urlpatterns = [
         views.sales_analytics,
         name="sales_analytics"
     ),
+    path(
+        "daily-sales/",
+        views.daily_sales,
+        name="daily_sales"
+    ),
 ]

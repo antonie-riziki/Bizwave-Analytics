@@ -413,3 +413,70 @@ def sales_analytics(request):
             status=500
         )
 
+
+@require_GET
+def daily_sales(request):
+    """Return daily sales trends from Supabase PostgreSQL."""
+
+    if not local_demo_only(request):
+        return JsonResponse(
+            {"error": "Local development only"},
+            status=403
+        )
+
+    business_id = 1
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT
+                    (transaction_date AT TIME ZONE 'Africa/Nairobi')::date
+                        AS sale_date,
+                    COUNT(*) AS total_orders,
+                    SUM(amount) AS total_sales
+                FROM transactions
+                WHERE business_id = %s
+                  AND transaction_type = %s
+                GROUP BY sale_date
+                ORDER BY sale_date ASC
+                """,
+                [business_id, "sale"]
+            )
+
+            rows = cursor.fetchall()
+
+        daily_data = [
+            {
+                "date": str(row[0]),
+                "total_orders": row[1],
+                "total_sales_kes": str(row[2])
+            }
+            for row in rows
+        ]
+
+        total_sales = sum(
+            (row[2] for row in rows),
+            Decimal("0")
+        )
+
+        highest_day = (
+            max(daily_data, key=lambda day: Decimal(day["total_sales_kes"]))
+            if daily_data else None
+        )
+
+        return JsonResponse({
+            "status": "success",
+            "business_id": business_id,
+            "timezone": "Africa/Nairobi",
+            "days_recorded": len(daily_data),
+            "total_sales_kes": str(total_sales),
+            "highest_sales_day": highest_day,
+            "daily_sales": daily_data
+        })
+
+    except Exception:
+        return JsonResponse(
+            {"error": "Unable to retrieve daily sales trends."},
+            status=500
+        )
