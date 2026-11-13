@@ -260,6 +260,47 @@ def main():
     )
     print("Unauthorized business status:", response.status_code)
 
+    # Real Grocery CSV Upload Test
+    print("\n===== REAL GROCERY CSV UPLOAD TEST =====")
+
+    from pathlib import Path
+
+    csv_path = Path(__file__).parent / "test_grocery_sales.csv"
+
+    with csv_path.open("rb") as csv_file:
+        response = client.post(
+            "/api/ingestion/upload/",
+            data={"file": csv_file},
+            HTTP_AUTHORIZATION=f"Bearer {token}",
+            HTTP_X_BUSINESS_ID="2",
+        )
+
+    print("Upload status:", response.status_code)
+    print("Upload response:", response.json())
+
+    # STEP 29.4: Verify transactions and analytics
+    print("\n===== POST-UPLOAD SALES VERIFICATION =====")
+
+    headers = {
+        "HTTP_AUTHORIZATION": f"Bearer {token}",
+        "HTTP_X_BUSINESS_ID": "2",
+    }
+
+    transactions_response = client.get(
+        "/api/ingestion/transactions/",
+        **headers,
+    )
+
+    print("Transactions status:", transactions_response.status_code)
+    print("Transactions response:", transactions_response.json())
+
+    analytics_response = client.get(
+        "/api/ingestion/analytics/",
+        **headers,
+    )
+
+    print("Analytics status:", analytics_response.status_code)
+    print("Analytics response:", analytics_response.json())
 
     # STEP 5: Optional business registration
     print("\n===== BUSINESS REGISTRATION TEST =====")
