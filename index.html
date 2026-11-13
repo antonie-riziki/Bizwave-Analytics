@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biz Wave – Managed Voice AI, SMS &amp; USSD Cloud Startup for SMEs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --blue-950: #06152D;
+      --blue-900: #0A2540;
+      --blue-800: #1E3A8A;
+      --blue-700: #1D4ED8;
+      --blue-600: #0066FF;
+      --blue-400: #38BDF8;
+      --blue-50: #EFF6FF;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #F8FAFC;
+      color: #0F172A;
+    }
+    .hero-mesh {
+      background:
+        radial-gradient(circle at 15% 18%, rgba(56, 189, 248, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 85% 12%, rgba(0, 102, 255, 0.16) 0%, transparent 50%),
+        linear-gradient(180deg, #EFF6FF 0%, #DBEAFE 50%, #F8FAFC 100%);
+    }
+    .navy-gradient {
+      background: linear-gradient(135deg, #06152D 0%, #0A2540 55%, #1E3A8A 100%);
+    }
+    .card-lift {
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .card-lift:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 36px -8px rgba(0, 102, 255, 0.14);
+      border-color: #0066FF;
+    }
+    .input-blue:focus {
+      outline: none;
+      border-color: #0066FF;
+      box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.18);
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-[#0066FF] selection:text-white">
+
+  <!-- ===================================================================== -->
+  <!-- FLOATING TOAST NOTIFICATION                                           -->
+  <!-- ===================================================================== -->
+  <div id="toastBanner" role="status" aria-live="polite" class="fixed bottom-5 right-5 z-50 hidden max-w-md rounded-2xl bg-[#0A2540] text-white px-5 py-3.5 shadow-2xl border border-sky-400/40 flex items-center gap-3 transition-all">
+    <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#38BDF8] animate-ping shrink-0"></span>
+    <span id="toastText" class="text-xs sm:text-sm font-medium leading-snug"></span>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- SIGN UP / CREATE SME CLOUD ACCOUNT MODAL (UNLOCKS PORTAL & ANALYTICS) -->
+  <!-- ===================================================================== -->
+  <div id="signupModal" class="fixed inset-0 z-50 hidden bg-[#06152D]/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 border-2 border-[#0066FF] shadow-2xl space-y-5">
+      <div class="flex items-start justify-between gap-4 border-b border-slate-200 pb-4">
+        <div>
+          <span class="inline-block px-2.5 py-1 rounded-full bg-blue-100 text-[#0066FF] text-[11px] font-extrabold uppercase tracking-wider mb-1.5">
+            SME Startup Early Access
+          </span>
+          <h3 class="text-xl font-black text-[#0A2540]">Create Your SME Cloud Account</h3>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Sign up to unlock your full SME Client Portal, guided document uploader, and live operational analytics.
+          </p>
+        </div>
+        <button id="closeSignupModalBtn" type="button" aria-label="Close sign up modal" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold flex items-center justify-center transition">
+          ✕
+        </button>
+      </div>
+
+      <form id="smeSignupForm" class="space-y-3.5 text-xs">
+        <div>
+          <label for="signupSmeName" class="block font-bold text-[#0A2540] mb-1">SME Business / Organisation Name</label>
+          <input id="signupSmeName" type="text" required placeholder="e.g., Savannah Retail SME" class="input-blue w-full rounded-xl border border-slate-300 px-3.5 py-2.5 font-medium text-[#0A2540]" />
+        </div>
+
+        <div>
+          <label for="signupEmail" class="block font-bold text-[#0A2540] mb-1">Work Email Address</label>
+          <input id="signupEmail" type="email" required placeholder="founder@yourbusiness.com" class="input-blue w-full rounded-xl border border-slate-300 px-3.5 py-2.5 font-medium text-[#0A2540]" />
+        </div>
+
+        <div>
+          <label for="signupPrimaryService" class="block font-bold text-[#0A2540] mb-1">Primary Service to Activate First</label>
+          <select id="signupPrimaryService" class="input-blue w-full rounded-xl border border-slate-300 px-3.5 py-2.5 font-semibold text-[#0A2540]">
+            <option value="Full Omnichannel Suite (Voice AI + SMS + USSD)">Full Omnichannel Suite (Voice AI + SMS + USSD)</option>
+            <option value="Multilingual Voice AI Unit">Multilingual Voice AI Unit</option>
+            <option value="Automated SMS Gateway Unit">Automated SMS Gateway Unit</option>
+            <option value="Interactive USSD Channel Unit">Interactive USSD Channel Unit</option>
+          </select>
+        </div>
+
+        <div class="p-3.5 rounded-2xl bg-[#EFF6FF] border border-blue-200 text-[11px] text-slate-700 space-y-1">
+          <strong class="text-[#0A2540] block">What Unlocks Immediately After Signing Up:</strong>
+          <p>• Full SME Client Portal &amp; guided knowledge-base upload workflow</p>
+          <p>• Live call, SMS &amp; USSD session analytics dashboard</p>
+          <p>• Zero server maintenance—external Virtual Server nodes managed by Biz Wave</p>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 px-5 rounded-2xl bg-[#0066FF] hover:bg-[#1D4ED8] text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-blue-600/25 transition">
+          Create Account &amp; Unlock SME Portal →
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- STRICT PRIVACY POLICY MODAL                                           -->
+  <!-- ===================================================================== -->
+  <div id="strictPrivacyModal" class="fixed inset-0 z-50 hidden bg-[#06152D]/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 border-2 border-[#0066FF] shadow-2xl space-y-5">
+      <div class="flex items-start justify-between gap-4 border-b border-slate-200 pb-4">
+        <div>
+          <span class="inline-block px-2.5 py-1 rounded-full bg-blue-100 text-[#0066FF] text-[11px] font-extrabold uppercase tracking-wider mb-1.5">
+            Strict Governance Covenant
+          </span>
+          <h3 class="text-xl font-black text-[#0A2540]">Biz Wave Strict Privacy Policy</h3>
+        </div>
+        <button id="closePrivacyModalBtn" type="button" aria-label="Close privacy modal" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold flex items-center justify-center transition">
+          ✕
+        </button>
+      </div>
+
+      <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+        As a cloud startup built for <strong>Small and Medium Enterprises (SMEs)</strong>, Biz Wave enforces a strict privacy and organisational isolation covenant from day one:
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
+        <div class="p-4 rounded-2xl bg-[#EFF6FF] border border-blue-200">
+          <strong class="text-[#0A2540] font-extrabold block mb-1">1. Service Delivery &amp; Post-Signup Analytics Only</strong>
+          <span class="text-slate-600">We collect SME &amp; customer interaction data strictly for cloud service delivery and your private post-signup dashboard.</span>
+        </div>
+        <div class="p-4 rounded-2xl bg-[#EFF6FF] border border-blue-200">
+          <strong class="text-[#0A2540] font-extrabold block mb-1">2. Strict Organisational Isolation</strong>
+          <span class="text-slate-600">The external Virtual Server Organisation never accesses unencrypted SME customer PII or raw business files.</span>
+        </div>
+        <div class="p-4 rounded-2xl bg-[#EFF6FF] border border-blue-200">
+          <strong class="text-[#0A2540] font-extrabold block mb-1">3. Zero Sharing &amp; Guard</strong>
+          <span class="text-slate-600">No personal data is ever sold or shared with third parties.</span>
+        </div>
+        <div class="p-4 rounded-2xl bg-[#EFF6FF] border border-blue-200">
+          <strong class="text-[#0A2540] font-extrabold block mb-1">4. Instant Automated Data Purge</strong>
+          <span class="text-slate-600">SMEs can trigger immediate, irreversible deletion of their cloud records and logs at any time after signing up.</span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-slate-200">
+        <button id="acceptStrictPrivacyBtn" type="button" class="px-5 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#1D4ED8] text-white text-xs font-extrabold uppercase tracking-wide shadow-md transition">
+          Acknowledge Strict Privacy Policy
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 1. STICKY TOP STARTUP NAVIGATION BAR                                  -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+      <!-- Brand Emblem -->
+      <a href="#top" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0A2540] to-[#0066FF] text-white font-black text-base tracking-tight flex items-center justify-center shadow-md group-hover:scale-105 transition">
+          BW
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-black text-lg sm:text-xl tracking-tight text-[#0A2540] leading-none">Biz Wave</span>
+            <span class="px-1.5 py-0.5 rounded bg-blue-100 text-[#0066FF] text-[9px] font-extrabold uppercase tracking-wider">Startup</span>
+          </div>
+          <span class="text-[10px] font-bold uppercase tracking-widest text-slate-500 block mt-0.5">SME Cloud Services</span>
+        </div>
+      </a>
+
+      <!-- Center Navigation Links (Services, Steps, Case Study Projections) -->
+      <nav aria-label="Primary Marketing Navigation" class="hidden md:flex items-center gap-8 text-xs font-bold text-slate-600">
+        <a href="#services" class="hover:text-[#0066FF] transition">Services Offered</a>
+        <a href="#steps" class="hover:text-[#0066FF] transition">Onboarding Steps</a>
+        <a href="#case-study" class="hover:text-[#0066FF] transition">Case Study Projections</a>
+      </nav>
+
+      <!-- Right Actions: Strict Privacy + Gated Portal Sign Up CTA -->
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <button id="headerPrivacyBtn" type="button" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:border-[#0066FF] bg-slate-50 hover:bg-blue-50 text-xs font-bold text-[#0A2540] transition">
+          <span>🛡️</span>
+          <span>Strict Privacy</span>
+        </button>
+
+        <button type="button" data-open-signup class="px-4 sm:px-5 py-2.5 rounded-xl bg-[#0066FF] hover:bg-[#1D4ED8] text-white text-xs font-extrabold shadow-md shadow-blue-600/20 transition">
+          Sign Up to Access Portal →
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="mobileMenuBtn" type="button" aria-label="Toggle Menu" class="md:hidden p-2 rounded-xl border border-slate-200 text-[#0A2540]">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobileNavDrawer" class="hidden md:hidden bg-white border-t border-slate-100 px-4 py-3 space-y-2 text-xs font-bold text-[#0A2540]">
+      <a href="#services" class="block py-2 px-3 rounded-lg hover:bg-[#EFF6FF]">Services Offered</a>
+      <a href="#steps" class="block py-2 px-3 rounded-lg hover:bg-[#EFF6FF]">Onboarding Steps</a>
+      <a href="#case-study" class="block py-2 px-3 rounded-lg hover:bg-[#EFF6FF]">Case Study Projections</a>
+      <button type="button" data-open-signup class="w-full text-left py-2 px-3 rounded-lg bg-[#0066FF] text-white font-extrabold">
+        Sign Up to Access Portal &amp; Analytics →
+      </button>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- 2. STARTUP HERO SECTION                                               -->
+  <!-- ===================================================================== -->
+  <section id="top" class="hero-mesh pt-14 pb-16 sm:pt-20 sm:pb-24 border-b border-blue-200/70">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-blue-200 shadow-sm text-xs font-extrabold text-[#0066FF]">
+        <span class="w-2 h-2 rounded-full bg-[#0066FF] animate-pulse"></span>
+        <span>Built by a Cloud Startup Dedicated to Small &amp; Medium Enterprises</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-[#0A2540] tracking-tight leading-[1.1]">
+        Cloud Voice AI, SMS &amp; USSD Built for <span class="text-[#0066FF]">Ambitious SMEs</span>
+      </h1>
+
+      <p class="text-sm sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+        We are an early-stage cloud startup making enterprise customer communication effortless for SMEs. Connect once to <strong>Biz Wave Cloud</strong>—we handle multilingual Voice AI, automated SMS, interactive USSD, and external virtual server orchestration behind the scenes.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3.5 pt-2">
+        <button type="button" data-open-signup class="px-7 py-4 rounded-2xl bg-[#0066FF] hover:bg-[#1D4ED8] text-white text-xs sm:text-sm font-extrabold shadow-lg shadow-blue-600/25 transition">
+          Sign Up to Access Portal &amp; Analytics →
+        </button>
+        <a href="#case-study" class="px-7 py-4 rounded-2xl bg-white hover:bg-blue-50 text-[#0A2540] border border-slate-300 text-xs sm:text-sm font-extrabold transition">
+          View SME Case Study Projections
+        </a>
+      </div>
+
+      <p class="text-[11px] font-semibold text-slate-500 pt-1">
+        Full SME client dashboards, document upload tools, and live operational analytics unlock immediately after signing up.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 3. SERVICES OFFERED (WITH INTERACTIVE SERVICE PREVIEWS)               -->
+  <!-- ===================================================================== -->
+  <section id="services" class="py-16 sm:py-24 bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+
+      <div class="max-w-3xl">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-[#0066FF]">
+          Services Offered • Modular SME Cloud Units
+        </span>
+        <h2 class="text-2xl sm:text-4xl font-black text-[#0A2540] mt-1">
+          Three Cloud Services. Zero Server Maintenance.
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+          Select any service below to preview how your customers experience Biz Wave Cloud, or sign up to configure and launch your own units.
+        </p>
+      </div>
+
+      <!-- 3 Service Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Service 1: Multilingual Voice AI Unit -->
+        <article data-service-key="voice" class="service-card card-lift rounded-3xl border-2 border-[#0066FF] bg-white overflow-hidden flex flex-col justify-between cursor-pointer">
+          <div>
+            <div class="h-32 bg-gradient-to-br from-[#06152D] via-[#0A2540] to-[#0066FF] p-5 flex flex-col justify-between text-white">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-1 rounded-lg bg-white/15 text-[11px] font-extrabold">Voice AI Service</span>
+                <span class="text-xl" aria-hidden="true">🎙️</span>
+              </div>
+              <h3 class="text-lg font-black text-white">Multilingual Voice AI Unit</h3>
+            </div>
+
+            <div class="p-5 space-y-3">
+              <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                An always-on AI voice receptionist for SMEs. Answers product inquiries, quotes prices from your uploaded catalog, and routes urgent calls in local and international languages.
+              </p>
+              <ul class="space-y-1.5 text-xs font-semibold text-[#0A2540]">
+                <li class="flex items-center gap-2"><span class="text-[#0066FF]">✓</span> Swahili, English &amp; French voice fluency</li>
+                <li class="flex items-center gap-2"><span class="text-[#0066FF]">✓</span> Trained on your SME's own FAQ &amp; price sheet</li>
+                <li class="flex items-center gap-2"><span class="text-[#0066FF]">✓</span> Cloud-hosted—no PBX hardware required</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="px-5 py-3.5 bg-[#EFF6FF] border-t border-blue-100 flex items-center justify-between">
+            <span class="text-xs font-extrabold text-[#0066FF]">Preview Service Experience</span>
+            <span class="text-xs font-black text-[#0A2540]">Active ●</span>
+          </div>
+        </article>
+
+        <!-- Service 2: Automated SMS Gateway Unit -->
+        <article data-service-key="sms" class="service-card card-lift rounded-3xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between cursor-pointer">
+          <div>
+            <div class="h-32 bg-gradient-to-br from-[#1E3A8A] via-[#0066FF] to-[#0284C7] p-5 flex flex-col justify-between text-white">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-1 rounded-lg bg-white/15 text-[11px] font-extrabold">SMS Gateway Service</span>
+                <span class="text-xl" aria-hidden="true">💬</span>
+              </div>
+              <h3 class="text-lg font-black text-white">Automated SMS Gateway Unit</h3>
+            </div>
+
+            <div class="p-5 space-y-3">
+              <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Two-way transactional messaging for SMEs. Automatically sends order confirmations, payment receipts, delivery updates, and answers customer SMS questions.
+              </p>
+              <ul class="space-y-1.5 text-xs font-semibold text-[#0A2540]">
+                <li class="flex items-center gap-2"><span class="text-[#0066FF]">✓</span> Branded SME Sender ID notifications</li>
+                <li class="flex items-center gap-2"><span class="text-[#0066FF]">✓</span> Automated two-way customer reply workflows</li>
+                <li class="flex items-center gap-2"><span class="text-[#0066FF]">✓</span> Full delivery logs unlocked after sign up</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-xs font-extrabold text-[#0066FF]">Preview Service Experience</span>
+            <span class="text-xs font-bold text-slate-400">Select →</span>
+          </div>
+        </article>
+
+        <!-- Service 3: Interactive USSD Channel Unit -->
+        <article data-service-key="ussd" class="service-card card-lift rounded-3xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between cursor-pointer">
+          <div>
+            <div class="h-32 bg-gradient-to-br from-[#0F172A] via-[#0A2540] to-[#1D4ED8] p-5 flex flex-col justify-between text-white">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-1 rounded-lg bg-white/15 text-[11px] font-extrabold">Offline USSD Service</span>
+                <span class="text-xl" aria-hidden="true">#️⃣</span>
+              </div>
+              <h3 class="text-lg font-black text-white">Interactive USSD Channel Unit</h3>
+            </div>
+
+            <div class="p-5 space-y-3">
+              <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Instant mobile menu self-service on any phone—no internet or smartphone app required. Customers dial your SME shortcode to browse stock and place orders offline.
+              </p>
+              <ul class="space-y-1.5 text-xs font-semibold text-[#0A2540]">
+                <li class="flex items-center gap-2"><span class="text-[#0066FF]">✓</span> Works on basic feature phones &amp; smartphones</li>
+                <li class="flex items-center gap-2"><span class="text-[#0066FF]">✓</span> Dynamic menus synced to your SME catalog</li>
+                <li class="flex items-center gap-2"><span class="text-[#0066FF]">✓</span> Seamless handoff to automated SMS receipts</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-xs font-extrabold text-[#0066FF]">Preview Service Experience</span>
+            <span class="text-xs font-bold text-slate-400">Select →</span>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- Interactive Service Preview Panel (No numeric metrics, pure qualitative product preview) -->
+      <div class="navy-gradient text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-sky-400/30 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div class="lg:col-span-7 space-y-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-3 py-1 rounded-full bg-[#0066FF] text-white text-[11px] font-extrabold uppercase tracking-wider">
+              Interactive Service Preview
+            </span>
+            <span id="previewServiceTag" class="text-xs font-bold text-[#38BDF8]">Multilingual Voice AI Unit</span>
+          </div>
+          <h3 id="previewServiceHeadline" class="text-xl sm:text-2xl font-black text-white">
+            How Customers Experience Your Voice AI Receptionist
+          </h3>
+          <p id="previewServiceDesc" class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+            When a customer calls your SME business line, Biz Wave's cloud voice engine greets them naturally in Swahili, English, or French, answers questions using your uploaded catalog, and logs the interaction for your post-signup dashboard.
+          </p>
+        </div>
+
+        <div class="lg:col-span-5 bg-[#06152D]/90 border border-sky-400/30 rounded-2xl p-5 space-y-3">
+          <span id="previewMockLabel" class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-300 block">
+            🎙️ Simulated Customer Dialogue
+          </span>
+          <p id="previewMockDialogue" class="text-xs sm:text-sm text-slate-100 font-medium leading-relaxed">
+            "Karibu! Thank you for calling. We have fresh stock available for same-day local dispatch. Would you like me to send our catalog link via SMS or connect you to sales?"
+          </p>
+          <div class="pt-2 border-t border-white/10 flex items-center justify-between">
+            <span class="text-[11px] text-slate-400">Configure your own script after sign up</span>
+            <button type="button" data-open-signup class="text-xs font-extrabold text-[#38BDF8] hover:text-white transition">
+              Sign Up →
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 4. CLEAR 4-STEP ONBOARDING & DEPLOYMENT WORKFLOW                      -->
+  <!-- ===================================================================== -->
+  <section id="steps" class="py-16 sm:py-24 bg-[#EFF6FF]/60 border-b border-blue-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div class="max-w-2xl">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-[#0066FF]">
+            How Biz Wave Works • 4 Simple Steps
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-black text-[#0A2540] mt-1">
+            From Sign Up to Live Cloud Deployment
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+            Your SME connects solely to Biz Wave Cloud. Behind the scenes, our platform coordinates with our external Virtual Server partner so you never touch infrastructure.
+          </p>
+        </div>
+      </div>
+
+      <!-- Interactive 4-Step Selector Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <button type="button" data-step-card="1" class="step-card text-left p-6 rounded-3xl bg-white border-2 border-[#0066FF] shadow-md transition space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="w-9 h-9 rounded-xl bg-[#0066FF] text-white font-black text-sm flex items-center justify-center">1</span>
+            <span class="text-[11px] font-extrabold uppercase text-[#0066FF]">Public Entry</span>
+          </div>
+          <h3 class="text-base font-black text-[#0A2540]">Sign Up &amp; Connect SME</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Create your SME cloud account in seconds. No hardware procurement or server configuration required.
+          </p>
+        </button>
+
+        <button type="button" data-step-card="2" class="step-card text-left p-6 rounded-3xl bg-white border border-slate-200 hover:border-[#0066FF] transition space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="w-9 h-9 rounded-xl bg-slate-100 text-[#0A2540] font-black text-sm flex items-center justify-center">2</span>
+            <span class="text-[11px] font-extrabold uppercase text-slate-400">Post-Signup</span>
+          </div>
+          <h3 class="text-base font-black text-[#0A2540]">Select &amp; Configure Units</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Inside your unlocked portal, activate Voice AI, SMS Gateway, or USSD channels and choose your languages.
+          </p>
+        </button>
+
+        <button type="button" data-step-card="3" class="step-card text-left p-6 rounded-3xl bg-white border border-slate-200 hover:border-[#0066FF] transition space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="w-9 h-9 rounded-xl bg-slate-100 text-[#0A2540] font-black text-sm flex items-center justify-center">3</span>
+            <span class="text-[11px] font-extrabold uppercase text-slate-400">Post-Signup</span>
+          </div>
+          <h3 class="text-base font-black text-[#0A2540]">Upload SME Knowledge Base</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Use our guided uploader in the portal to attach your price lists and FAQs so our cloud AI speaks for your brand.
+          </p>
+        </button>
+
+        <button type="button" data-step-card="4" class="step-card text-left p-6 rounded-3xl bg-white border border-slate-200 hover:border-[#0066FF] transition space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="w-9 h-9 rounded-xl bg-slate-100 text-[#0A2540] font-black text-sm flex items-center justify-center">4</span>
+            <span class="text-[11px] font-extrabold uppercase text-slate-400">Post-Signup</span>
+          </div>
+          <h3 class="text-base font-black text-[#0A2540]">Cloud Deploy &amp; Analytics</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Biz Wave orchestrates external Server compute nodes automatically and unlocks your live analytics dashboard.
+          </p>
+        </button>
+      </div>
+
+      <!-- Active Step Detail Banner -->
+      <div class="bg-white rounded-3xl border border-blue-200 p-6 sm:p-7 flex flex-col lg:flex-row lg:items-center justify-between gap-5 shadow-sm">
+        <div class="space-y-1.5 max-w-3xl">
+          <span id="stepDetailBadge" class="inline-block px-2.5 py-0.5 rounded-full bg-blue-100 text-[#0066FF] text-[11px] font-extrabold uppercase">
+            Step 1 of 4 • SME Cloud Connection
+          </span>
+          <h3 id="stepDetailTitle" class="text-lg font-black text-[#0A2540]">
+            Step 1: Connect Your SME Directly to Biz Wave 
+          </h3>
+          <p id="stepDetailDesc" class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Click any Sign Up button on this page to register your Small or Medium Enterprise. Once signed in, you gain immediate access to your private SME Client Portal, guided document uploader, and live analytics—while Biz Wave manages the external infrastructure behind the scenes.
+          </p>
+        </div>
+        <button type="button" data-open-signup class="px-6 py-3.5 rounded-2xl bg-[#0A2540] hover:bg-[#0066FF] text-white text-xs font-extrabold uppercase tracking-wide shrink-0 transition">
+          Unlock Full Portal Now →
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 5. CASE STUDY PROJECTION PLOTTER (NO RAW METRICS — VISUAL CURVES ONLY)-->
+  <!-- ===================================================================== -->
+  <section id="case-study" class="py-16 sm:py-24 bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+      <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+        <div class="max-w-3xl">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-[#0066FF]">
+            Startup Case Study Model • Visual Trajectory Projections
+          </span>
+          <h2 class="text-2xl sm:text-4xl font-black text-[#0A2540] mt-1">
+            Projected SME Growth Trajectory: Savannah Retail Case Study
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+            Rather than displaying inflated vanity counters, we model projected operational trajectories over a 6-month adoption curve using a representative SME case study (<strong>Savannah Retail SME</strong>)—comparing manual handling against Biz Wave Cloud deployment.
+          </p>
+        </div>
+
+        <!-- Interactive Toggle Buttons: Voice AI, SMS, USSD Case Study Projections -->
+        <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl self-start lg:self-auto">
+          <button type="button" data-proj-channel="voice" class="proj-toggle-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-[#0066FF] text-white shadow-sm transition">
+            🎙️ Voice AI Projection
+          </button>
+          <button type="button" data-proj-channel="sms" class="proj-toggle-btn px-4 py-2 rounded-xl text-xs font-extrabold text-slate-600 hover:text-[#0A2540] transition">
+            💬 SMS Projection
+          </button>
+          <button type="button" data-proj-channel="ussd" class="proj-toggle-btn px-4 py-2 rounded-xl text-xs font-extrabold text-slate-600 hover:text-[#0A2540] transition">
+            #️⃣ USSD Projection
+          </button>
+        </div>
+      </div>
+
+      <!-- Case Study Plotter Card -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+        <!-- Left 8 Cols: Interactive HTML5 Canvas Trajectory Chart -->
+        <div class="lg:col-span-8 bg-[#EFF6FF]/60 rounded-3xl border-2 border-blue-200/90 p-5 sm:p-7 flex flex-col justify-between space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 id="chartChannelTitle" class="text-base sm:text-lg font-black text-[#0A2540]">
+                Savannah Retail SME — Multilingual Voice AI Adoption Curve
+              </h3>
+              <p class="text-xs text-slate-500">
+                6-Month Projected Trajectory (Baseline Manual Operations vs. Biz Wave Cloud)
+              </p>
+            </div>
+
+            <!-- Qualitative Legend -->
+            <div class="flex items-center gap-4 text-xs font-bold">
+              <span class="flex items-center gap-1.5 text-[#0066FF]">
+                <span class="w-3 h-3 rounded-full bg-[#0066FF] inline-block"></span>
+                Biz Wave Cloud Trajectory
+              </span>
+              <span class="flex items-center gap-1.5 text-slate-500">
+                <span class="w-3 h-3 rounded-full bg-slate-400 inline-block"></span>
+                Manual SME Baseline
+              </span>
+            </div>
+          </div>
+
+          <!-- Responsive HTML5 Canvas Container -->
+          <div id="projectionCanvasContainer" class="w-full h-64 sm:h-72 bg-white rounded-2xl border border-blue-100 p-3 relative">
+            <canvas id="caseStudyProjectionCanvas" class="w-full h-full block"></canvas>
+          </div>
+
+          <p class="text-[11px] text-slate-500 font-medium">
+            * Trajectory curves illustrate projected qualitative gains across inquiry resolution, response speed, and customer reach from Month 1 onboarding through Month 6 maturity. Live SME-specific analytics unlock after signing up.
+          </p>
+        </div>
+
+        <!-- Right 4 Cols: Case Study Qualitative Narrative & Sign Up Gate -->
+        <div class="lg:col-span-4 navy-gradient text-white rounded-3xl p-6 sm:p-7 shadow-xl border border-sky-400/30 flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <span class="inline-block px-3 py-1 rounded-full bg-white/10 text-[#38BDF8] text-[11px] font-extrabold uppercase tracking-wider">
+              Case Study Profile • Savannah Retail SME
+            </span>
+
+            <h3 id="caseNarrativeHeading" class="text-xl font-black text-white leading-snug">
+              Eliminating Missed Customer Calls During Peak Hours
+            </h3>
+
+            <p id="caseNarrativeChallenge" class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+              <strong class="text-white">Before Biz Wave:</strong> Savannah Retail relied on a single store phone line, leaving repeat product and stock questions unanswered during busy store hours.
+            </p>
+
+            <p id="caseNarrativeOutcome" class="text-xs sm:text-sm text-sky-100 leading-relaxed">
+              <strong class="text-[#38BDF8]">Projected Biz Wave Trajectory:</strong> By Month 1, automated Swahili &amp; English voice greetings capture incoming inquiries immediately; by Month 6, inquiry resolution and customer reach scale smoothly without adding front-desk overhead.
+            </p>
+
+            <div class="pt-2 space-y-2 border-t border-white/15 text-xs">
+              <div class="flex items-center gap-2 text-emerald-300 font-bold">
+                <span>▲</span>
+                <span id="bulletOne">Projected Response Speed: Instant pickup from Month 1</span>
+              </div>
+              <div class="flex items-center gap-2 text-emerald-300 font-bold">
+                <span>▲</span>
+                <span id="bulletTwo">Projected Inquiry Resolution: Continuous catalog learning</span>
+              </div>
+              <div class="flex items-center gap-2 text-emerald-300 font-bold">
+                <span>▲</span>
+                <span id="bulletThree">Projected Customer Reach: Multilingual 24/7 coverage</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-white/15 space-y-2.5">
+            <button type="button" data-open-signup class="w-full py-3.5 px-5 rounded-2xl bg-[#0066FF] hover:bg-blue-500 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg transition">
+              Sign Up to Access Portal &amp; Analytics →
+            </button>
+            <p class="text-[11px] text-center text-slate-300">
+              Unlock your own SME dashboard &amp; upload tools post-signup
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- 6. MINIMALIST STARTUP FOOTER                                          -->
+  <!-- ===================================================================== -->
+  <footer class="bg-[#06152D] text-slate-300 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-slate-800">
+        <div class="space-y-2 max-w-md">
+          <div class="flex items-center gap-2.5">
+            <span class="w-9 h-9 rounded-xl bg-[#0066FF] text-white font-black text-sm flex items-center justify-center">BW</span>
+            <div>
+              <span class="font-black text-white text-base tracking-tight block leading-none">Biz Wave</span>
+              <span class="text-[10px] font-bold uppercase tracking-widest text-[#38BDF8]">SME Cloud Startup</span>
+            </div>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Managed Voice AI, SMS, and USSD Cloud Services built for Small and Medium Enterprises. All dashboards, document uploads, and live analytics unlock after signing up.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4 text-xs font-extrabold">
+          <a href="#services" class="text-slate-300 hover:text-white transition">Services</a>
+          <a href="#steps" class="text-slate-300 hover:text-white transition">Onboarding Steps</a>
+          <a href="#case-study" class="text-slate-300 hover:text-white transition">Case Study</a>
+        </div>
+      </div>
+
+      <div class="pt-6 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-400">
+        <span>© 2026 Biz Wave Cloud Services • Startup Built for SMEs</span>
+        <button id="footerPrivacyBtn" type="button" class="text-sky-300 hover:text-white font-bold underline transition">
+          Strict Privacy Policy
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- INTERACTIVE JAVASCRIPT (NO RAW METRICS — PURE PROJECTIONS & GATING)   -->
+  <!-- ===================================================================== -->
+  <script>
+    (function initBizWaveStartupLanding() {
+      // 1. Toast Notification Helper
+      const toastBanner = document.getElementById('toastBanner');
+      const toastText = document.getElementById('toastText');
+      let toastTimer = null;
+
+      function showToast(message) {
+        if (!toastBanner || !toastText) return;
+        toastText.textContent = message;
+        toastBanner.classList.remove('hidden');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastBanner.classList.add('hidden');
+        }, 4500);
+      }
+
+      // 2. Mobile Menu Drawer
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const mobileNavDrawer = document.getElementById('mobileNavDrawer');
+      if (mobileMenuBtn && mobileNavDrawer) {
+        mobileMenuBtn.addEventListener('click', () => {
+          mobileNavDrawer.classList.toggle('hidden');
+        });
+        mobileNavDrawer.querySelectorAll('a, button').forEach((el) => {
+          el.addEventListener('click', () => mobileNavDrawer.classList.add('hidden'));
+        });
+      }
+
+      // 3. Sign Up Modal Controls (Gates Full Portal & Analytics)
+      const signupModal = document.getElementById('signupModal');
+      const closeSignupModalBtn = document.getElementById('closeSignupModalBtn');
+      const smeSignupForm = document.getElementById('smeSignupForm');
+
+      function openSignupModal() {
+        if (signupModal) signupModal.classList.remove('hidden');
+      }
+      function closeSignupModal() {
+        if (signupModal) signupModal.classList.add('hidden');
+      }
+
+      document.querySelectorAll('[data-open-signup]').forEach((btn) => {
+        btn.addEventListener('click', openSignupModal);
+      });
+      if (closeSignupModalBtn) {
+        closeSignupModalBtn.addEventListener('click', closeSignupModal);
+      }
+      if (signupModal) {
+        signupModal.addEventListener('click', (e) => {
+          if (e.target === signupModal) closeSignupModal();
+        });
+      }
+
+      if (smeSignupForm) {
+        smeSignupForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const smeName = document.getElementById('signupSmeName').value.trim();
+          const service = document.getElementById('signupPrimaryService').value;
+          closeSignupModal();
+          showToast('Welcome to Biz Wave, ' + smeName + '! Your SME account is created—unlocking your portal & ' + service + ' setup.');
+          smeSignupForm.reset();
+        });
+      }
+
+      // 4. Strict Privacy Policy Modal Controls
+      const strictPrivacyModal = document.getElementById('strictPrivacyModal');
+      const headerPrivacyBtn = document.getElementById('headerPrivacyBtn');
+      const footerPrivacyBtn = document.getElementById('footerPrivacyBtn');
+      const closePrivacyModalBtn = document.getElementById('closePrivacyModalBtn');
+      const acceptStrictPrivacyBtn = document.getElementById('acceptStrictPrivacyBtn');
+
+      function openPrivacyModal() {
+        if (strictPrivacyModal) strictPrivacyModal.classList.remove('hidden');
+      }
+      function closePrivacyModal() {
+        if (strictPrivacyModal) strictPrivacyModal.classList.add('hidden');
+      }
+
+      if (headerPrivacyBtn) headerPrivacyBtn.addEventListener('click', openPrivacyModal);
+      if (footerPrivacyBtn) footerPrivacyBtn.addEventListener('click', openPrivacyModal);
+      if (closePrivacyModalBtn) closePrivacyModalBtn.addEventListener('click', closePrivacyModal);
+      if (acceptStrictPrivacyBtn) {
+        acceptStrictPrivacyBtn.addEventListener('click', () => {
+          closePrivacyModal();
+          showToast('Strict Privacy Policy acknowledged. All SME data remains isolated and encrypted.');
+        });
+      }
+      if (strictPrivacyModal) {
+        strictPrivacyModal.addEventListener('click', (e) => {
+          if (e.target === strictPrivacyModal) closePrivacyModal();
+        });
+      }
+
+      // 5. Interactive Services Offered Preview Switcher
+      const servicePreviews = {
+        voice: {
+          tag: 'Multilingual Voice AI Unit',
+          headline: 'How Customers Experience Your Voice AI Receptionist',
+          desc: "When a customer calls your SME business line, Biz Wave's cloud voice engine greets them naturally in Swahili, English, or French, answers questions using your uploaded catalog, and logs the interaction for your post-signup dashboard.",
+          mockLabel: '🎙️ Simulated Customer Voice Dialogue',
+          mockDialogue: '"Karibu! Thank you for calling. We have fresh stock available for same-day local dispatch. Would you like me to send our catalog link via SMS or connect you to sales?"'
+        },
+        sms: {
+          tag: 'Automated SMS Gateway Unit',
+          headline: 'Instant Two-Way SMS Confirmations & Customer Replies',
+          desc: 'Customers receive branded SMS receipts, order status updates, and instant answers to stock or pricing questions—powered automatically by Biz Wave Cloud without manual typing.',
+          mockLabel: '💬 Simulated Branded SME SMS Thread',
+          mockDialogue: '[SME-ALERTS]: Your order has been confirmed and scheduled for afternoon dispatch. Reply STOCK anytime to check item availability or HELP to speak with our team.'
+        },
+        ussd: {
+          tag: 'Interactive USSD Channel Unit',
+          headline: 'Offline Mobile Self-Service on Any Handset',
+          desc: 'Customers dial your SME USSD shortcode without mobile data or a smartphone app to browse available items, place express orders, and trigger instant SMS receipts.',
+          mockLabel: '#️⃣ Simulated Offline USSD Handset Menu',
+          mockDialogue: 'Welcome to SME Self-Service:\n1. Browse Product Catalog\n2. Place Express Order\n3. Request Voice Callback'
+        }
+      };
+
+      const serviceCards = document.querySelectorAll('.service-card');
+      serviceCards.forEach((card) => {
+        card.addEventListener('click', () => {
+          const key = card.getAttribute('data-service-key') || 'voice';
+          const info = servicePreviews[key] || servicePreviews.voice;
+
+          document.getElementById('previewServiceTag').textContent = info.tag;
+          document.getElementById('previewServiceHeadline').textContent = info.headline;
+          document.getElementById('previewServiceDesc').textContent = info.desc;
+          document.getElementById('previewMockLabel').textContent = info.mockLabel;
+          document.getElementById('previewMockDialogue').textContent = info.mockDialogue;
+
+          serviceCards.forEach((c) => {
+            const isSelected = c === card;
+            c.className = isSelected
+              ? 'service-card card-lift rounded-3xl border-2 border-[#0066FF] bg-white overflow-hidden flex flex-col justify-between cursor-pointer'
+              : 'service-card card-lift rounded-3xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between cursor-pointer';
+            const footer = c.querySelector('div:last-child');
+            const badge = footer.querySelector('span:last-child');
+            footer.className = isSelected
+              ? 'px-5 py-3.5 bg-[#EFF6FF] border-t border-blue-100 flex items-center justify-between'
+              : 'px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between';
+            badge.className = isSelected ? 'text-xs font-black text-[#0A2540]' : 'text-xs font-bold text-slate-400';
+            badge.textContent = isSelected ? 'Active ●' : 'Select →';
+          });
+        });
+      });
+
+      // 6. Interactive 4-Step Onboarding & Deployment Details
+      const stepDetails = {
+        1: {
+          badge: 'Step 1 of 4 • SME Cloud Connection',
+          title: 'Step 1: Connect Your SME Directly to Biz Wave Cloud',
+          desc: 'Click any Sign Up button on this page to register your Small or Medium Enterprise. Once signed in, you gain immediate access to your private SME Client Portal, guided document uploader, and live analytics—while Biz Wave manages all external Virtual Server infrastructure behind the scenes.'
+        },
+        2: {
+          badge: 'Step 2 of 4 • Post-Signup Unit Configuration',
+          title: 'Step 2: Select & Configure Voice AI, SMS, or USSD Units',
+          desc: 'Inside your unlocked SME Portal, pick which communication units your business needs first, set your preferred languages (Swahili, English, French), and customize your greeting workflows.'
+        },
+        3: {
+          badge: 'Step 3 of 4 • Post-Signup Guided Document Upload',
+          title: 'Step 3: Upload Your SME Price Lists & FAQs',
+          desc: 'Our step-by-step upload guide inside the portal lets you attach CSV, JSON, or PDF business documents. Biz Wave Cloud indexes them automatically so Voice AI, SMS, and USSD give accurate answers.'
+        },
+        4: {
+          badge: 'Step 4 of 4 • Automated Cloud & Virtual Server Deployment',
+          title: 'Step 4: Deploy to Cloud & View Live SME Analytics',
+          desc: 'Upon deployment, Biz Wave Cloud seamlessly bridges encrypted workloads to our external Virtual Server partner organisation and activates real-time call, SMS, and USSD analytics inside your private dashboard.'
+        }
+      };
+
+      const stepCards = document.querySelectorAll('.step-card');
+      stepCards.forEach((card) => {
+        card.addEventListener('click', () => {
+          const stepNum = Number(card.getAttribute('data-step-card')) || 1;
+          const info = stepDetails[stepNum] || stepDetails[1];
+
+          document.getElementById('stepDetailBadge').textContent = info.badge;
+          document.getElementById('stepDetailTitle').textContent = info.title;
+          document.getElementById('stepDetailDesc').textContent = info.desc;
+
+          stepCards.forEach((c) => {
+            const isSelected = c === card;
+            c.className = isSelected
+              ? 'step-card text-left p-6 rounded-3xl bg-white border-2 border-[#0066FF] shadow-md transition space-y-3'
+              : 'step-card text-left p-6 rounded-3xl bg-white border border-slate-200 hover:border-[#0066FF] transition space-y-3';
+            const numBadge = c.querySelector('span:first-child');
+            numBadge.className = isSelected
+              ? 'w-9 h-9 rounded-xl bg-[#0066FF] text-white font-black text-sm flex items-center justify-center'
+              : 'w-9 h-9 rounded-xl bg-slate-100 text-[#0A2540] font-black text-sm flex items-center justify-center';
+          });
+        });
+      });
+
+      // 7. Case Study Projection Plotter (HTML5 Canvas — Qualitative Trajectories Only, Zero Raw Numbers)
+      const caseStudyProjections = {
+        voice: {
+          chartTitle: 'Savannah Retail SME — Multilingual Voice AI Adoption Curve',
+          heading: 'Eliminating Missed Customer Calls During Peak Hours',
+          challenge: 'Before Biz Wave: Savannah Retail relied on a single store phone line, leaving repeat product and stock questions unanswered during busy store hours.',
+          outcome: 'Projected Biz Wave Trajectory: By Month 1, automated Swahili & English voice greetings capture incoming inquiries immediately; by Month 6, inquiry resolution and customer reach scale smoothly without adding front-desk overhead.',
+          b1: 'Projected Response Speed: Instant pickup from Month 1',
+          b2: 'Projected Inquiry Resolution: Continuous catalog learning',
+          b3: 'Projected Customer Reach: Multilingual 24/7 coverage',
+          // Normalized relative trajectory points (0.0 to 1.0 scale, no raw counts)
+          baselineCurve: [0.22, 0.23, 0.22, 0.24, 0.23, 0.25],
+          bizWaveCurve: [0.34, 0.50, 0.65, 0.77, 0.86, 0.93]
+        },
+        sms: {
+          chartTitle: 'Savannah Retail SME — Automated SMS Gateway Adoption Curve',
+          heading: 'Replacing Manual Order Follow-Ups with Instant Two-Way SMS',
+          challenge: 'Before Biz Wave: Store staff manually texted order confirmations and delivery updates, causing delays and frequent status check calls.',
+          outcome: 'Projected Biz Wave Trajectory: Connecting to Biz Wave SMS automates instant order alerts in Month 1 and builds two-way self-service replies through Month 6.',
+          b1: 'Projected Response Speed: Real-time dispatch notifications',
+          b2: 'Projected Inquiry Resolution: Automated keyword & FAQ replies',
+          b3: 'Projected Customer Reach: Consistent repeat-buyer engagement',
+          baselineCurve: [0.26, 0.27, 0.28, 0.27, 0.29, 0.30],
+          bizWaveCurve: [0.40, 0.56, 0.70, 0.81, 0.89, 0.95]
+        },
+        ussd: {
+          chartTitle: 'Savannah Retail SME — Offline USSD Channel Adoption Curve',
+          heading: 'Reaching Offline & Feature-Phone Shoppers Without Mobile Data',
+          challenge: 'Before Biz Wave: Customers without mobile data or smartphone apps could not browse live stock or place quick self-service orders.',
+          outcome: 'Projected Biz Wave Trajectory: Launching an interactive USSD menu expands accessibility from Month 1 onward, enabling seamless offline ordering through Month 6.',
+          b1: 'Projected Response Speed: Instant menu navigation on any handset',
+          b2: 'Projected Inquiry Resolution: Direct catalog-synced ordering',
+          b3: 'Projected Customer Reach: Zero-data accessibility across regions',
+          baselineCurve: [0.16, 0.17, 0.17, 0.18, 0.18, 0.19],
+          bizWaveCurve: [0.30, 0.46, 0.62, 0.75, 0.85, 0.92]
+        }
+      };
+
+      let activeProjectionKey = 'voice';
+      const canvas = document.getElementById('caseStudyProjectionCanvas');
+      const canvasContainer = document.getElementById('projectionCanvasContainer');
+
+      function drawProjectionChart() {
+        if (!canvas || !canvasContainer) return;
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvasContainer.getBoundingClientRect();
+        const width = Math.max(280, rect.width - 24);
+        const height = Math.max(200, rect.height - 24);
+
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+
+        const ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+        ctx.clearRect(0, 0, width, height);
+
+        const padLeft = 68;
+        const padRight = 24;
+        const padTop = 22;
+        const padBottom = 34;
+        const plotW = width - padLeft - padRight;
+        const plotH = height - padTop - padBottom;
+
+        const proj = caseStudyProjections[activeProjectionKey] || caseStudyProjections.voice;
+        const months = ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'];
+        const yTiers = [
+          { label: 'High Impact', val: 0.9 },
+          { label: 'Growth', val: 0.6 },
+          { label: 'Baseline', val: 0.3 }
+        ];
+
+        // Horizontal qualitative grid lines & labels (No numbers!)
+        ctx.font = '600 11px Inter, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+
+        yTiers.forEach((tier) => {
+          const y = padTop + plotH * (1 - tier.val);
+          ctx.strokeStyle = '#E2E8F0';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(padLeft, y);
+          ctx.lineTo(padLeft + plotW, y);
+          ctx.stroke();
+
+          ctx.fillStyle = '#64748B';
+          ctx.fillText(tier.label, padLeft - 10, y);
+        });
+
+        // X-Axis Month Labels
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        months.forEach((m, i) => {
+          const x = padLeft + (plotW * i) / (months.length - 1);
+          ctx.fillStyle = '#475569';
+          ctx.fillText(m, x, padTop + plotH + 12);
+        });
+
+        // Helper to compute smooth points
+        function getPoints(values) {
+          return values.map((v, i) => ({
+            x: padLeft + (plotW * i) / (values.length - 1),
+            y: padTop + plotH * (1 - v)
+          }));
+        }
+
+        const basePts = getPoints(proj.baselineCurve);
+        const bwPts = getPoints(proj.bizWaveCurve);
+
+        // Draw Manual Baseline Dashed Curve
+        ctx.save();
+        ctx.strokeStyle = '#94A3B8';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([6, 5]);
+        ctx.beginPath();
+        basePts.forEach((pt, idx) => {
+          if (idx === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        });
+        ctx.stroke();
+        ctx.restore();
+
+        // Draw Biz Wave Gradient Fill Area
+        const areaGrad = ctx.createLinearGradient(0, padTop, 0, padTop + plotH);
+        areaGrad.addColorStop(0, 'rgba(0, 102, 255, 0.22)');
+        areaGrad.addColorStop(1, 'rgba(0, 102, 255, 0.01)');
+
+        ctx.fillStyle = areaGrad;
+        ctx.beginPath();
+        ctx.moveTo(bwPts[0].x, padTop + plotH);
+        bwPts.forEach((pt) => ctx.lineTo(pt.x, pt.y));
+        ctx.lineTo(bwPts[bwPts.length - 1].x, padTop + plotH);
+        ctx.closePath();
+        ctx.fill();
+
+        // Draw Biz Wave Main Trajectory Line
+        ctx.strokeStyle = '#0066FF';
+        ctx.lineWidth = 3.5;
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        bwPts.forEach((pt, idx) => {
+          if (idx === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        });
+        ctx.stroke();
+
+        // Draw Nodes on Biz Wave Curve
+        bwPts.forEach((pt, idx) => {
+          ctx.fillStyle = idx === bwPts.length - 1 ? '#0A2540' : '#0066FF';
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, idx === bwPts.length - 1 ? 6 : 4.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        });
+      }
+
+      function selectProjectionChannel(channelKey) {
+        activeProjectionKey = channelKey;
+        const proj = caseStudyProjections[channelKey] || caseStudyProjections.voice;
+
+        document.getElementById('chartChannelTitle').textContent = proj.chartTitle;
+        document.getElementById('caseNarrativeHeading').textContent = proj.heading;
+        document.getElementById('caseNarrativeChallenge').textContent = proj.challenge;
+        document.getElementById('caseNarrativeOutcome').textContent = proj.outcome;
+        document.getElementById('bulletOne').textContent = proj.b1;
+        document.getElementById('bulletTwo').textContent = proj.b2;
+        document.getElementById('bulletThree').textContent = proj.b3;
+
+        document.querySelectorAll('.proj-toggle-btn').forEach((btn) => {
+          const isMatch = btn.getAttribute('data-proj-channel') === channelKey;
+          btn.className = isMatch
+            ? 'proj-toggle-btn px-4 py-2 rounded-xl text-xs font-extrabold bg-[#0066FF] text-white shadow-sm transition'
+            : 'proj-toggle-btn px-4 py-2 rounded-xl text-xs font-extrabold text-slate-600 hover:text-[#0A2540] transition';
+        });
+
+        drawProjectionChart();
+      }
+
+      document.querySelectorAll('.proj-toggle-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectProjectionChannel(btn.getAttribute('data-proj-channel') || 'voice');
+        });
+      });
+
+      window.addEventListener('resize', drawProjectionChart);
+      window.addEventListener('load', drawProjectionChart);
+      drawProjectionChart();
+    })();
+  </script>
+</body>
+</html>
