@@ -303,3 +303,113 @@ def get_transactions(request):
             {"error": "Unable to retrieve transactions."},
             status=500
         )
+
+        
+@require_GET
+def sales_analytics(request):
+    """Calculate sales analytics from Supabase transactions."""
+
+    if not local_demo_only(request):
+        return JsonResponse(
+            {"error": "Local development only"},
+            status=403
+        )
+
+    business_id = 1
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT description, amount
+                FROM transactions
+                WHERE business_id = %s
+                  AND transaction_type = %s
+                """,
+                [business_id, "sale"]
+            )
+            rows = cursor.fetchall()
+
+        total_orders = len(rows)
+        total_sales = sum(
+            (amount for _, amount in rows),
+            Decimal("0")
+        )
+
+        average_order = (
+            total_sales / total_orders
+            if total_orders else Decimal("0")
+        )
+
+        product_stats = {}
+
+        for description, amount in rows:
+            if not description or ": " not in description:
+                continue
+
+            details = description.split(": ", 1)[1]
+
+            if " x" not in details:
+                continue
+
+            product, quantity_text = details.rsplit(" x", 1)
+
+            try:
+                quantity = int(quantity_text)
+            except ValueError:
+                continue
+
+            if quantity <= 0 or not product.strip():
+                continue
+
+            product = product.strip()
+
+            if product not in product_stats:
+                product_stats[product] = {
+                    "product": product,
+                    "quantity_sold": 0,
+                    "revenue_kes": Decimal("0")
+                }
+
+            product_stats[product]["quantity_sold"] += quantity
+            product_stats[product]["revenue_kes"] += amount
+
+        ranked_products = sorted(
+            product_stats.values(),
+            key=lambda p: (
+                -p["quantity_sold"],
+                -p["revenue_kes"],
+                p["product"]
+            )
+        )
+
+        products = [
+            {
+                "product": p["product"],
+                "quantity_sold": p["quantity_sold"],
+                "revenue_kes": str(p["revenue_kes"])
+            }
+            for p in ranked_products
+        ]
+
+        return JsonResponse({
+            "status": "success",
+            "business_id": business_id,
+            "total_sales_kes": str(total_sales),
+            "total_orders": total_orders,
+            "average_order_value_kes": str(
+                average_order.quantize(Decimal("0.01"))
+            ),
+            "best_selling_product": (
+                ranked_products[0]["product"]
+                if ranked_products else None
+            ),
+            "products": products
+        })
+
+    except Exception:
+        return JsonResponse(
+            {"error": "Unable to calculate sales analytics."},
+            status=500
+        )
+
