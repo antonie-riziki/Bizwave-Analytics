@@ -1,3 +1,10 @@
+from rest_framework.exceptions import APIException
+from rest_framework.views import exception_handler
+
+from .business_access import (
+    get_authorized_business_id,
+    get_upload_authorized_business_id,
+)
 
 import io
 from decimal import Decimal, InvalidOperation
@@ -9,6 +16,16 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 
+# Django REST Framework
+from rest_framework.exceptions import APIException
+from rest_framework.views import exception_handler
+
+# Supabase business authorization
+from .business_access import (
+    get_authorized_business_id,
+    get_upload_authorized_business_id,
+)
+
 
 REQUIRED_COLUMNS = [
     "Order_ID",
@@ -16,6 +33,24 @@ REQUIRED_COLUMNS = [
     "Quantity",
     "Estimated_Order_Total_KES",
 ]
+
+COLUMN_ALIASES = {
+    "Order_ID": [
+        "Order_ID", "Order ID", "Invoice_No",
+        "Invoice Number", "Transaction_ID", "Receipt_No"
+    ],
+    "Pizza_Name": [
+        "Pizza_Name", "Product", "Product_Name",
+        "Item", "Item_Name", "Description"
+    ],
+    "Quantity": [
+        "Quantity", "Qty", "Units", "Quantity_Sold"
+    ],
+    "Estimated_Order_Total_KES": [
+        "Estimated_Order_Total_KES", "Total",
+        "Amount", "Sales_Amount", "Total_KES"
+    ],
+}
 
 
 def local_demo_only(request):
@@ -26,17 +61,62 @@ def local_demo_only(request):
     )
 
 
+
+# ==================================================
+# HELPER 1: CHECK BUSINESS ACCESS
+# ==================================================
+
+def resolve_business_access(request):
+    """
+    Return (business_id, None) if authorized,
+    or (None, error_response) if authorization fails.
+    """
+    try:
+        business_id = get_authorized_business_id(request)
+        return business_id, None
+
+    except APIException as exc:
+        response = exception_handler(exc, {"request": request})
+
+        return None, JsonResponse(
+            {"error": str(exc.detail)},
+            status=response.status_code if response else 500,
+        )
+
+
+# ==================================================
+# HELPER 2: CHECK CSV/EXCEL UPLOAD PERMISSIONS
+# ==================================================
+
+def resolve_upload_access(request):
+    """
+    Allow only authorized business owners and admins
+    to upload CSV or Excel sales records.
+    """
+    try:
+        business_id = get_upload_authorized_business_id(request)
+        return business_id, None
+
+    except APIException as exc:
+        response = exception_handler(exc, {"request": request})
+
+        return None, JsonResponse(
+            {"error": str(exc.detail)},
+            status=response.status_code if response else 500,
+        )
+
 @csrf_exempt
 @require_POST
 def upload_file(request):
     """Upload CSV/Excel orders and save sales to Supabase."""
 
-    if not local_demo_only(request):
-        return JsonResponse(
-            {"error": "Local development only"},
-            status=403
-        )
+    # Verify authentication and owner/admin upload permissions
+    business_id, error_response = resolve_upload_access(request)
 
+    if error_response is not None:
+        return error_response
+
+    # Get uploaded file
     uploaded_file = request.FILES.get("file")
 
     if not uploaded_file:
@@ -45,6 +125,7 @@ def upload_file(request):
             status=400
         )
 
+    # Validate file extension
     filename = uploaded_file.name.lower()
 
     if not filename.endswith((".csv", ".xlsx")):
@@ -53,12 +134,14 @@ def upload_file(request):
             status=400
         )
 
+    # Validate file size (maximum 5 MB)
     if uploaded_file.size > 5 * 1024 * 1024:
         return JsonResponse(
             {"error": "File must not exceed 5 MB."},
             status=400
         )
 
+    # Read CSV or Excel file
     try:
         file_bytes = io.BytesIO(uploaded_file.read())
 
@@ -79,12 +162,74 @@ def upload_file(request):
             status=400
         )
 
+    # Check whether file contains data
     if df.empty:
         return JsonResponse(
             {"error": "The uploaded file is empty."},
             status=400
         )
 
+
+    # Automatically map different business CSV column names
+    def normalize_column_name(name):
+        return "".join(
+            char.lower() for char in str(name).strip()
+            if char.isalnum()
+        )
+
+    normalized_columns = {}
+
+    for column in df.columns:
+        normalized = normalize_column_name(column)
+
+        if normalized in normalized_columns:
+            return JsonResponse(
+                {"error": "Duplicate or ambiguous column names."},
+                status=400
+            )
+
+        normalized_columns[normalized] = column
+
+    column_mapping = {}
+    used_columns = set()
+
+    for standard_name, aliases in COLUMN_ALIASES.items():
+        matches = []
+
+        for alias in aliases:
+            normalized_alias = normalize_column_name(alias)
+
+            if normalized_alias in normalized_columns:
+                original_column = normalized_columns[normalized_alias]
+
+                if original_column not in matches:
+                    matches.append(original_column)
+
+        if len(matches) > 1:
+            return JsonResponse(
+                {
+                    "error": "Multiple columns match the same field.",
+                    "field": standard_name,
+                    "columns": matches,
+                },
+                status=400
+            )
+
+        if matches:
+            original_column = matches[0]
+
+            if original_column in used_columns:
+                return JsonResponse(
+                    {"error": "Ambiguous column mapping."},
+                    status=400
+                )
+
+            used_columns.add(original_column)
+            column_mapping[original_column] = standard_name
+
+    df = df.rename(columns=column_mapping)
+
+    # Check required columns
     missing_columns = [
         column for column in REQUIRED_COLUMNS
         if column not in df.columns
@@ -99,19 +244,21 @@ def upload_file(request):
             status=400
         )
 
+    # Check for empty required fields
     if df[REQUIRED_COLUMNS].isnull().any().any():
         return JsonResponse(
             {"error": "Required fields cannot be empty."},
             status=400
         )
 
+    # Check for duplicate order IDs
     if df["Order_ID"].astype(str).str.strip().duplicated().any():
         return JsonResponse(
             {"error": "Duplicate Order_ID values in uploaded file."},
             status=400
         )
 
-    business_id = 1
+    # Prepare validated transactions for database insertion
     prepared = []
 
     try:
@@ -240,18 +387,14 @@ def upload_file(request):
         "saved_amount_kes": str(total_amount)
     })
 
-
 @require_GET
 def get_transactions(request):
-    """Retrieve demo business sales transactions from Supabase."""
+    """Retrieve sales for an authenticated business."""
 
-    if not local_demo_only(request):
-        return JsonResponse(
-            {"error": "Local development only"},
-            status=403
-        )
+    business_id, error_response = resolve_business_access(request)
 
-    business_id = 1
+    if error_response is not None:
+        return error_response
 
     try:
         with connection.cursor() as cursor:
@@ -307,15 +450,12 @@ def get_transactions(request):
         
 @require_GET
 def sales_analytics(request):
-    """Calculate sales analytics from Supabase transactions."""
+    """Calculate sales analytics for an authenticated business."""
 
-    if not local_demo_only(request):
-        return JsonResponse(
-            {"error": "Local development only"},
-            status=403
-        )
+    business_id, error_response = resolve_business_access(request)
 
-    business_id = 1
+    if error_response is not None:
+        return error_response
 
     try:
         with connection.cursor() as cursor:
@@ -416,15 +556,12 @@ def sales_analytics(request):
 
 @require_GET
 def daily_sales(request):
-    """Return daily sales trends from Supabase PostgreSQL."""
+    """Return daily sales for an authenticated business."""
 
-    if not local_demo_only(request):
-        return JsonResponse(
-            {"error": "Local development only"},
-            status=403
-        )
+    business_id, error_response = resolve_business_access(request)
 
-    business_id = 1
+    if error_response is not None:
+        return error_response
 
     try:
         with connection.cursor() as cursor:
